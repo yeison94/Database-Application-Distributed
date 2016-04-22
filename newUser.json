@@ -1,0 +1,17 @@
+{
+  "name"       : "Jeison Andres Hurtado",
+  "email"      : "yeison_andres94@hotmail.com",
+  "password"   : "123456789",
+  "gender"     : "Male",
+  "picture"    : [
+                   {
+                     "ID"     : "12345",
+                     "base64" :  "https://www.facebook.com/photo.php?fbid=10206353519691595&set=rpd.1075415591&type=3&theater"
+                   },
+                   {
+                   	 "ID"     : "32bbvs",
+                   	"base64"  : "https://www.facebook.com/photo.php?fbid=10205893939722166&set=rpd.1075415591&type=3&theater"
+                   }
+                 ],
+  "externalID" : "skjdjfb87u345k"
+}
