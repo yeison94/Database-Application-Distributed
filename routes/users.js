@@ -3,34 +3,64 @@ module.exports = function(app) {
 
   var User = require('../models/user.js');
 
-  // //GET - Return all tvshows in the DB
-  // findAllTVShows = function(req, res) {
-  // 	TVShow.find(function(err, users) {
-  // 		if(!err) {
-  //       console.log('GET /tvshows')
-  // 			res.send(tvshows);
-  // 		} else {
-  // 			console.log('ERROR: ' + err);
-  // 		}
-  // 	});
-  // };
 
-  // //GET - Return a TVShow with specified ID
-  // findById = function(req, res) {
-  // 	TVShow.findById(req.params.id, function(err, tvshow) {
-  // 		if(!err) {
-  //       console.log('GET /tvshow/' + req.params.id);
-  // 			res.send(tvshow);
-  // 		} else {
-  // 			console.log('ERROR: ' + err);
-  // 		}
-  // 	});
-  // };
+ //GET - Validate user using email and password
+  findByEmailPassword = function(req, res) {
 
-  //POST - Insert a new TVShow in the DB
-  addUser = function(req, res) {
+    var Email = req.params.email;
+    var SizeEmail = req.params.email.length;
+    var EmailUser = Email.substring(1,SizeEmail);
 
-    var JSONresponse;
+    var Pass = req.params.password;
+    var SizePas = req.params.password.length;
+    var PasswordlUser = Pass.substring(1,SizePas);
+
+
+    User.findOne({email : EmailUser, password : PasswordlUser}, function(err, user) {
+      if(!err) {
+        if(user != null){
+          console.log("EL USUARIO EXISTE");
+          res.json({UserId: user.email, externalID : user.externalID, isSuccess : true ,error : null});
+        }else{
+          console.log("EL USUARIO NO EXISTE");
+          res.json({UserId: EmailUser, externalID : null, isSuccess : false ,error : null});
+        }
+        
+      } else {
+        console.log('ERROR: ' + err.name);
+        res.json({UserId: EmailUser, externalID : null, isSuccess : false ,error : err.name});
+      }
+    });
+  };
+
+  //GET - Verify email exist
+  findByEmail = function(req, res) {
+
+    var Email = req.params.email;
+    var SizeParam = req.params.email.length;
+    var EmailUser = Email.substring(1,SizeParam);
+
+
+
+  	User.findOne({email : EmailUser}, function(err, user) {
+  		if(!err) {
+        if(user != null){
+          console.log("SE ENCONTRO COINCIDENCIA");
+          res.json({success: true, id : user.email, error : null});
+        }else{
+          console.log("NO SE ENCONTRO COINCIDENCIA");
+          res.json({success: false, id : EmailUser, error : null});
+        }
+  			
+  		} else {
+  			console.log('ERROR: ' + err.name);
+        res.json({success: false, id : EmailUser, error : err.name});
+  		}
+  	});
+  };
+
+  //POST - Insert a new User in the DB
+  RegisterUser = function(req, res) {
 
   	var user = new User({
   		name:    req.body.name,
@@ -45,7 +75,7 @@ module.exports = function(app) {
   		 
       if(!err) {
         console.log('User registrated');
-        res.json({UserId : req.body.email, isSuccess : true,error : null });     
+        res.json({UserId : req.body.email, isSuccess : true, error : null });     
       } else {
         console.log('ERROR: ' + err);
         res.json({UserId : req.body.email,isSuccess : false, error : err.name});    
@@ -53,46 +83,10 @@ module.exports = function(app) {
   	});
   };
 
-  // //PUT - Update a register already exists
-  // updateTVShow = function(req, res) {
-  // 	TVShow.findById(req.params.id, function(err, tvshow) {
-  // 		tvshow.title   = req.body.petId;
-  // 		tvshow.year    = req.body.year;
-  // 		tvshow.country = req.body.country;
-  // 		tvshow.poster  = req.body.poster;
-  // 		tvshow.seasons = req.body.seasons;
-  // 		tvshow.genre   = req.body.genre;
-  // 		tvshow.summary = req.body.summary;
-
-  // 		tvshow.save(function(err) {
-  // 			if(!err) {
-  // 				console.log('Updated');
-  // 			} else {
-  // 				console.log('ERROR: ' + err);
-  // 			}
-  // 			res.send(tvshow);
-  // 		});
-  // 	});
-  // }
-
-  // //DELETE - Delete a TVShow with specified ID
-  // deleteTVShow = function(req, res) {
-  // 	TVShow.findById(req.params.id, function(err, tvshow) {
-  // 		tvshow.remove(function(err) {
-  // 			if(!err) {
-  // 				console.log('Removed');
-  // 			} else {
-  // 				console.log('ERROR: ' + err);
-  // 			}
-  // 		})
-  // 	});
-  // }
 
   //Link routes and functions
-  // app.get('/tvshows', findAllTVShows);
-  // app.get('/tvshow/:id', findById);
-  app.post('/user', addUser);
-  // app.put('/tvshow/:id', updateTVShow);
-  // app.delete('/tvshow/:id', deleteTVShow);
+  app.get('/users/:email/:password',findByEmailPassword);
+  app.get('/users/:email', findByEmail);
+  app.post('/users', RegisterUser);
 
 }
